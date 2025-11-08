@@ -90,7 +90,7 @@ public class UsuarioController {
             session.removeAttribute("usuariosTemp");
             session.removeAttribute("nombreArchivoTemp");
         } else {
-            model.addAttribute("mensajeError", "Error al insertar usuarios: " + result.errorMessage);
+            model.addAttribute("mensajeError", "Error al insertar datos: " + result.errorMessage);
         }
 
         return "UsuarioCargaMasiva";
