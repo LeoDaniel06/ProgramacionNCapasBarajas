@@ -22,17 +22,17 @@ public class Usuario {
     
     @NotNull(message = "El campo no debe estar vacio")
     @NotBlank(message = "Campo obligatorio")
-    @Pattern(regexp = "^[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)*$", message = "El nombre debe iniciar con mayúscula y contener solo letras")
+    @Pattern(regexp = "^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*)*$", message = "El nombre debe iniciar con mayúscula y contener solo letras")
     private String NombreUsuario;
     
     @NotNull(message = "El campo no debe estar vacio")
     @NotBlank(message = "Campo obligatorio")
-    @Pattern(regexp = "^[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)*$", message = "El nombre debe iniciar con mayúscula y contener solo letras")
+    @Pattern(regexp = "^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*)*$", message = "El nombre debe iniciar con mayúscula y contener solo letras")
     private String ApellidoPat;
     
     @NotNull(message = "El campo no debe estar vacio")
     @NotBlank(message = "Campo obligatorio")
-    @Pattern(regexp = "^[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)*$", message = "El nombre debe iniciar con mayúscula y contener solo letras")
+    @Pattern(regexp = "^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*)*$", message = "El nombre debe iniciar con mayúscula y contener solo letras")
     private String ApellidoMat;
     
     @NotBlank(message = "Campo obligatorio")

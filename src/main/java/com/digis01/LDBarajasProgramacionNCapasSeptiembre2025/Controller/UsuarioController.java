@@ -75,23 +75,60 @@ public class UsuarioController {
     @PostMapping("/procesar")
     public String procesarUsuarios(HttpSession session, Model model) {
 
-        //  Recuperar usuarios de la sesión
-        List<Usuario> usuarios = (List<Usuario>) session.getAttribute("usuariosTemp");
+        // Recuperar solo el nombre del archivo guardado en la carga
         String nombreArchivo = (String) session.getAttribute("nombreArchivoTemp");
 
-        if (usuarios == null || usuarios.isEmpty()) {
-            model.addAttribute("mensajeError", "No hay usuarios para procesar. Primero debe cargar y validar un archivo.");
+        if (nombreArchivo == null || nombreArchivo.isBlank()) {
+            model.addAttribute("mensajeError", "No se encontró el archivo a procesar. Primero debe cargarlo.");
             return "UsuarioCargaMasiva";
         }
-        Result result = usuarioDAOImplementation.AddALL(usuarios);
 
-        if (result.correct) {
-            model.addAttribute("mensajeExito", "Todos los usuarios del archivo '" + nombreArchivo + "' se insertaron correctamente.");
-            session.removeAttribute("usuariosTemp");
-            session.removeAttribute("nombreArchivoTemp");
-        } else {
-            model.addAttribute("mensajeError", "Error al insertar datos: " + result.errorMessage);
+        List<Usuario> usuarios = new ArrayList<>();
+
+        try {
+            String pathBase = System.getProperty("user.dir");
+            String pathArchivo = pathBase + "/src/main/resources/ArchivosCarga/" + nombreArchivo;
+            File archivo = new File(pathArchivo);
+
+            if (!archivo.exists()) {
+                model.addAttribute("mensajeError", "El archivo no existe en el servidor: " + nombreArchivo);
+                return "UsuarioCargaMasiva";
+            }
+
+            String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf(".") + 1).toLowerCase();
+
+            switch (extension) {
+                case "txt" ->
+                    usuarios = leerArchivoTXT(archivo);
+                case "xlsx" ->
+                    usuarios = leerArchivoXLSX(archivo);
+                default -> {
+                    model.addAttribute("mensajeError", "Extensión no soportada: " + extension);
+                    return "UsuarioCargaMasiva";
+                }
+            }
+
+            if (usuarios.isEmpty()) {
+                model.addAttribute("mensajeError", "El archivo no contiene usuarios válidos para insertar.");
+                return "UsuarioCargaMasiva";
+            }
+
+            // Insertar directamente
+            Result result = usuarioDAOImplementation.AddALL(usuarios);
+
+            if (result.correct) {
+                model.addAttribute("mensajeExito", "Usuarios procesados correctamente desde el archivo '" + nombreArchivo + "'.");
+            } else {
+                model.addAttribute("mensajeError", "Error al insertar los datos: " + result.errorMessage);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("mensajeError", "Error al procesar el archivo: " + e.getMessage());
         }
+
+        // Limpiar la sesión (opcional)
+        session.removeAttribute("nombreArchivoTemp");
 
         return "UsuarioCargaMasiva";
     }
@@ -148,14 +185,14 @@ public class UsuarioController {
             }
         }
 
-        // 🔹 Si hay errores: mostrar en vista, limpiar sesión
+        // Si hay errores: mostrar en vista, limpiar sesión
         if (!errores.isEmpty()) {
             session.removeAttribute("usuariosTemp");
             session.removeAttribute("nombreArchivoTemp");
 
             model.addAttribute("errores", errores);
             model.addAttribute("mensajeError", "Se encontraron errores en la validación del archivo.");
-        } // 🔹 Si todo está bien: guardar en sesión
+        } // Si todo está bien: guardar en sesión
         else {
             session.setAttribute("usuariosTemp", usuarios);
             session.setAttribute("nombreArchivoTemp", nombreFinal);
@@ -322,7 +359,6 @@ public class UsuarioController {
                     yield cell.getDateCellValue().toString();
                 } else {
                     double value = cell.getNumericCellValue();
-                    // Evita notación científica
                     yield (value == Math.floor(value)) ? String.valueOf((long) value) : String.valueOf(value);
                 }
             }
