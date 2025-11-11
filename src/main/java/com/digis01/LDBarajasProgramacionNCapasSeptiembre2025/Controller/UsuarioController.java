@@ -62,7 +62,7 @@ public class UsuarioController {
     public String Index(Model model) {
         Result result = usuarioDAOImplementation.GETALL();
         Result resultJPA = usuarioJPADAOImplementation.GetAll();
-        model.addAttribute("usuarios", result.objects);
+        model.addAttribute("usuarios", resultJPA.objects);
         model.addAttribute("Roles", rolDAOImplementation.GETALL().objects);
         model.addAttribute("Usuario", new Usuario());
         return "UsuarioIndex";

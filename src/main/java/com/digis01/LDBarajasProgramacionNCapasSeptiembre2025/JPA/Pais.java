@@ -8,23 +8,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "ROL")
-public class RolJPA {
-    
+@Table(name = "PAIS")
+public class Pais {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idrol")
-    private Integer IdRol;
+    @Column(name="idpais")
+    private int Pais;
     
-    @Column(name = "nombre")
+    @Column(name="nombre")
     private String Nombre;
 
-    public Integer getIdRol() {
-        return IdRol;
+    public int getPais() {
+        return Pais;
     }
 
-    public void setIdRol(Integer IdRol) {
-        this.IdRol = IdRol;
+    public void setPais(int Pais) {
+        this.Pais = Pais;
     }
 
     public String getNombre() {
@@ -34,5 +33,5 @@ public class RolJPA {
     public void setNombre(String Nombre) {
         this.Nombre = Nombre;
     }
-    
+
 }
