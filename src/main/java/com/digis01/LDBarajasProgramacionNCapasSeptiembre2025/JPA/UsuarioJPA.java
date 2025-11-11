@@ -9,9 +9,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name= "USUARIO")
+@Table(name= "Usuario")
 public class UsuarioJPA {
     
     @Id
@@ -22,8 +23,8 @@ public class UsuarioJPA {
     @Column(name="username")
     private String UserName;
     
-    @Column(name="nombreusuario")
-    private String NombreUsuario;
+    @Column(name="nombre")
+    private String Nombre;
     
     @Column(name="apellidopat")
     private String ApellidoPat;
@@ -38,6 +39,7 @@ public class UsuarioJPA {
     private String Password;
     
     @Column(name="fechanacimiento")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date FechaNacimiento;
     
     @Column(name="sexo")
@@ -58,4 +60,6 @@ public class UsuarioJPA {
     @ManyToOne
     @JoinColumn(name="idrol")
     public RolJPA RolJPA;
+    
+    
 }
