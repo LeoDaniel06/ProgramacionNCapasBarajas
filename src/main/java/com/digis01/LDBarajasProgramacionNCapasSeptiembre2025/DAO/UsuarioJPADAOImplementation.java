@@ -29,18 +29,14 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         try {
             TypedQuery<UsuarioJPA> queryUsuario = entityManager.createQuery("FROM UsuarioJPA", UsuarioJPA.class);
             List<UsuarioJPA> usuariosJPA = queryUsuario.getResultList();
-
             List<Usuario> usuariosML = usuariosJPA.stream().map(usuario -> modelMapper.map(usuario, Usuario.class)).collect(Collectors.toList());
-
             result.objects = (List<Object>) (List<?>) usuariosML;
             result.correct = true;
-
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
-
         return result;
     }
     
@@ -54,14 +50,11 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
             if(usuarioJPA.getDireccionesJPA()!=null && !usuarioJPA.getDireccionesJPA().isEmpty()){
                 for(DireccionJPA direccion : usuarioJPA.getDireccionesJPA()){
                     direccion.setUsuarioJPA(usuarioJPA);
-                }
-                
+                } 
             }
-            
             entityManager.persist(usuarioJPA);
             entityManager.flush();
             result.correct = true;
-            
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
