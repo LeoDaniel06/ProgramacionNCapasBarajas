@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="COLONIA")
-public class Colonia {
+public class ColoniaJPA {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Colonia {
     
     @ManyToOne
     @JoinColumn(name="idmunicipio")
-    public Municipio Municipio;
+    public MunicipioJPA MunicipioJPA;
 
     public int getIdColonia() {
         return IdColonia;
@@ -52,13 +52,12 @@ public class Colonia {
         this.CodigoPostal = CodigoPostal;
     }
 
-    public Municipio getMunicipio() {
-        return Municipio;
+    public MunicipioJPA getMunicipioJPA() {
+        return MunicipioJPA;
     }
 
-    public void setMunicipio(Municipio Municipio) {
-        this.Municipio = Municipio;
-    }
-    
+    public void setMunicipioJPA(MunicipioJPA MunicipioJPA) {
+        this.MunicipioJPA = MunicipioJPA;
+    } 
     
 }

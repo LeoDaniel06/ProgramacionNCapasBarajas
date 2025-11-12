@@ -165,6 +165,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
                     usuario.setCurp(rsUsuario.getString("Curp"));
                     usuario.setSexo(rsUsuario.getString("Sexo"));
                     usuario.setImagen(rsUsuario.getString("Imagen"));
+                    usuario.setPassword(rsUsuario.getString("Password"));
 
                     Rol rol = new Rol();
                     rol.setIdRol(rsUsuario.getInt("IdRol"));

@@ -514,7 +514,7 @@ public class UsuarioController {
 
     @PostMapping("/update")
     public String updateUsuario(@ModelAttribute("usuario") Usuario usuario, RedirectAttributes redirectAttributes) {
-        Result resultUsuario = usuarioDAOImplementation.UsuarioUPDATE(usuario);
+        Result resultUsuario = usuarioJPADAOImplementation.Update(usuario);
 
         if (resultUsuario.correct) {
             redirectAttributes.addFlashAttribute("mensajeExito", "Se actualizaron los datos de " + usuario.getUserName());
@@ -532,7 +532,7 @@ public class UsuarioController {
             RedirectAttributes redirectAttributes) {
 
         // Llamar al DAO para guardar la dirección
-        Result result = usuarioDAOImplementation.DireccionADD(direccion, idUsuario);
+        Result result = usuarioJPADAOImplementation.AddDireccion(direccion, idUsuario);
 
         if (result.correct) {
             redirectAttributes.addFlashAttribute("mensajeExito", "Dirección agregada correctamente.");
@@ -556,7 +556,7 @@ public class UsuarioController {
             return "redirect:/usuario/detail/" + idUsuario;
         }
 
-        Result result = usuarioDAOImplementation.DireccionUPDATE(direccion, idUsuario);
+        Result result = usuarioJPADAOImplementation.DireccionUPDATE(direccion, idUsuario);
 
         if (result.correct) {
             redirectAttributes.addFlashAttribute("mensajeExito", "Dirección actualizada correctamente.");

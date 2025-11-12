@@ -17,7 +17,7 @@ public class DireccionJPA {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="iddireccion")
-    private Integer IdDIreccion;
+    private Integer IdDireccion;
     
     @Column(name="calle")
     private String Calle;
@@ -30,18 +30,18 @@ public class DireccionJPA {
     
     @ManyToOne
     @JoinColumn(name="idcolonia")
-    public Colonia Colonia;
+    public ColoniaJPA ColoniaJPA;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="idusuario")
     public UsuarioJPA UsuarioJPA;
 
-    public Integer getIdDIreccion() {
-        return IdDIreccion;
+    public Integer getIdDireccion() {
+        return IdDireccion;
     }
 
-    public void setIdDIreccion(Integer IdDIreccion) {
-        this.IdDIreccion = IdDIreccion;
+    public void setIdDireccion(Integer IdDireccion) {
+        this.IdDireccion = IdDireccion;
     }
 
     public String getCalle() {
@@ -68,12 +68,12 @@ public class DireccionJPA {
         this.NumeroExterior = NumeroExterior;
     }
 
-    public Colonia getColonia() {
-        return Colonia;
+    public ColoniaJPA getColoniaJPA() {
+        return ColoniaJPA;
     }
 
-    public void setColonia(Colonia Colonia) {
-        this.Colonia = Colonia;
+    public void setColoniaJPA(ColoniaJPA ColoniaJPA) {
+        this.ColoniaJPA = ColoniaJPA;
     }
 
     public UsuarioJPA getUsuarioJPA() {
