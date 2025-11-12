@@ -10,8 +10,6 @@ public class ModelMapperConfig {
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
-
-        // Opcional: configurar mapeo recursivo profundo
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
 
         return modelMapper;

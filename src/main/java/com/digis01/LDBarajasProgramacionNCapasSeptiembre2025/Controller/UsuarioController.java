@@ -470,7 +470,7 @@ public class UsuarioController {
             } else {
                 usuario.setImagen(null);
             }
-            usuarioDAOImplementation.ADD(usuario);
+            Result result = usuarioJPADAOImplementation.Add(usuario);
 
         } catch (IOException ex) {
             Logger.getLogger(UsuarioController.class
