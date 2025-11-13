@@ -178,7 +178,73 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         return result;
     }
     
-//    -------------------------------------DELETE USUARIO---------------------------------------------------
+//    -------------------------------------UPDATE IMAGEN--------------------------------------------------------------
+    @Override
+    @Transactional
+    public Result UpdateImagen(int idUsuario, String NuevaImgenB64){
+        Result result = new Result();
+        try {
+            UsuarioJPA usuarioJPA = entityManager.find(UsuarioJPA.class, idUsuario);
+            if (usuarioJPA!=null) {
+                usuarioJPA.setImagen(NuevaImgenB64);
+                result.correct = true;
+            } else{
+                result.correct = false;
+                result.errorMessage = "Usuario no encontrado";
+            }
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getMessage();
+            result.ex = ex;
+        }
+        return result;
+    }
     
+//    -------------------------------------DELETE USUARIO---------------------------------------------------
+    @Override
+    @Transactional
+    public Result DeleteUsuario(int idUsuario){
+        Result result = new Result();
+       
+        try {
+            UsuarioJPA usuarioJPA = entityManager.find(UsuarioJPA.class, idUsuario);
+            if (usuarioJPA != null) {
+                entityManager.remove(usuarioJPA);
+                entityManager.flush();
+                result.correct = true;
+            } else{
+                result.correct = false;
+                result.errorMessage = "Usuario no existe";
+            }
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        return result;
+    }
+    
+//    -----------------------------------DELETE DIRECCION-------------------------------------------------------
+    @Override
+    @Transactional
+    public Result DeleteDireccion(int idDireccion){
+        Result result = new Result();
+        try {
+            DireccionJPA direccionJPA = entityManager.find(DireccionJPA.class, idDireccion);
+            if (direccionJPA != null) {
+                entityManager.remove(direccionJPA);
+                entityManager.flush();
+                result.correct = true;
+            } else{
+                result.correct = false;
+                result.errorMessage = "Direccion no existe";
+            }
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        return result;
+    }
 
 }

@@ -570,7 +570,7 @@ public class UsuarioController {
 //------------------------------------------------------ELIMINAR USUARIO------------------------------------------------------
     @PostMapping("/delete")
     public String eliminarUsuario(@RequestParam int idUsuario, RedirectAttributes redirectAttributes) {
-        Result result = usuarioDAOImplementation.UsuarioDELETE(idUsuario);
+        Result result = usuarioJPADAOImplementation.DeleteUsuario(idUsuario);
 
         if (result.correct) {
             redirectAttributes.addFlashAttribute("mensaje", "Usuario eliminado correctamente");
@@ -591,7 +591,7 @@ public class UsuarioController {
 //    ----------------------------------------------DIRECCION DELETE-------------------------------------------------------
     @PostMapping("/direccion/delete/{idUsuario}")
     public String deleteDireccion(@PathVariable int idUsuario, @RequestParam int idDireccion, RedirectAttributes redirectAttributes) {
-        Result result = usuarioDAOImplementation.DireccionDELETE(idDireccion);
+        Result result = usuarioJPADAOImplementation.DeleteDireccion(idDireccion);
 
         if (result.correct) {
             redirectAttributes.addFlashAttribute("MensajeExito", "Dirección eliminada correctamente");
@@ -613,7 +613,7 @@ public class UsuarioController {
                 byte[] bytes = file.getBytes();
                 String imagenBase64 = Base64.getEncoder().encodeToString(bytes);
 
-                Result result = usuarioDAOImplementation.UsuarioUPDATEImagen(idUsuario, imagenBase64);
+                Result result = usuarioJPADAOImplementation.UpdateImagen(idUsuario, imagenBase64);
 
                 if (!result.correct) {
                     // Si falla, podrías enviar un mensaje de error o log

@@ -14,4 +14,7 @@ public interface IUsuarioJPA{
     Result Update(Usuario usuarioML);
     Result DireccionUPDATE(Direccion direccionML, int idUsuario);
     Result AddDireccion(Direccion direccionML, int idUsuario);
+    Result DeleteUsuario(int idUsuario);
+    Result DeleteDireccion(int idDireccion);
+    Result UpdateImagen(int idUsuario, String NuevaImgenB64);
 }
