@@ -64,6 +64,8 @@ public class UsuarioController {
     private EstadoJPADAOImplementation estadoJPADAOImplementation;
     @Autowired
     private MunicipioJPADAOImplementation municipioJPADAOImplementation;
+    @Autowired
+    private RolJPADAOImplementation rolJPADAOImplementation;
 //------------------------------------------------------USUARIO INDEX-----------------------------------------------------
 
     @GetMapping
@@ -71,7 +73,7 @@ public class UsuarioController {
 //        Result result = usuarioDAOImplementation.GETALL();
         Result resultJPA = usuarioJPADAOImplementation.GetAll();
         model.addAttribute("usuarios", resultJPA.objects);
-        model.addAttribute("Roles", rolDAOImplementation.GETALL().objects);
+        model.addAttribute("Roles", rolJPADAOImplementation.GETALL().objects);
         model.addAttribute("Usuario", new Usuario());
         return "UsuarioIndex";
     }
@@ -411,7 +413,7 @@ public class UsuarioController {
 
         if (result.correct && result.object != null) {
             Usuario usuario = (Usuario) result.object;
-            model.addAttribute("rol", rolDAOImplementation.GETALL().objects);
+            model.addAttribute("rol", rolJPADAOImplementation.GETALL().objects);
             model.addAttribute("usuario", usuario);
             model.addAttribute("direccion", new Direccion());
         } else {
@@ -427,7 +429,7 @@ public class UsuarioController {
         Usuario usuario = new Usuario();
 
         model.addAttribute("Usuario", usuario);
-        model.addAttribute("roles", rolDAOImplementation.GETALL().objects);
+        model.addAttribute("roles", rolJPADAOImplementation.GETALL().objects);
         model.addAttribute("paises", paisJPADAOImplementation.GETALL().objects);
 
         return "UsuarioForm";
@@ -438,7 +440,7 @@ public class UsuarioController {
     ) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("roles", rolDAOImplementation.GETALL().objects);
+            model.addAttribute("roles", rolJPADAOImplementation.GETALL().objects);
             model.addAttribute("paises", paisJPADAOImplementation.GETALL().objects);
 
             if (usuario.Direcciones.get(0).getColonia().getMunicipio().getEstado().getPais().getIdPais() > 0) {

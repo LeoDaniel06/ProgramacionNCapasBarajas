@@ -23,10 +23,8 @@ public class ColoniaJPADAOImplementation implements IColoniaDAO {
     private ModelMapper modelMapper;
 
     @Override
-    @Transactional
     public Result GetByIdMunicipio(int IdMunicipio) {
         Result result = new Result();
-
         try {
             TypedQuery<ColoniaJPA> querycolonias = entityManager.createQuery(
                     "FROM ColoniaJPA colonia WHERE colonia.MunicipioJPA.IdMunicipio = :idMunicipio", ColoniaJPA.class);
@@ -34,19 +32,16 @@ public class ColoniaJPADAOImplementation implements IColoniaDAO {
             List<ColoniaJPA> coloniasJPA = querycolonias.getResultList();
             List<Colonia> coloniasML = new ArrayList<>();
             for (ColoniaJPA coloniaJPA : coloniasJPA) {
-
                 Colonia colonia = modelMapper.map(coloniaJPA, Colonia.class);
                 coloniasML.add(colonia);
             }
             result.objects = (List<Object>) (List<?>) coloniasML;
             result.correct = true;
-
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
-
         return result;
     }
 }

@@ -1,8 +1,8 @@
 package com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.DAO;
 
-import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.JPA.EstadoJPA;
-import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.ML.Estado;
+import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.JPA.RolJPA;
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.ML.Result;
+import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.ML.Rol;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.ArrayList;
@@ -12,27 +12,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EstadoJPADAOImplementation implements IEstadoJPA {
-
+public class RolJPADAOImplementation implements IRolJPA{
+    
     @Autowired
     private EntityManager entityManager;
+
     @Autowired
     private ModelMapper modelMapper;
-
+    
     @Override
-    public Result GetByIdPais(int IdPais) {
+    public Result GETALL(){
         Result result = new Result();
         try {
-            TypedQuery<EstadoJPA> queryEstados = entityManager.createQuery(
-                    "FROM EstadoJPA estado WHERE estado.PaisJPA.IdPais = :idPais", EstadoJPA.class);
-            queryEstados.setParameter("idPais", IdPais);
-            List<EstadoJPA> estadosJPA = queryEstados.getResultList();
-            List<Estado> estadosML = new ArrayList<>();
-            for (EstadoJPA estadoJPA : estadosJPA) {
-                Estado estado = modelMapper.map(estadoJPA, Estado.class);
-                estadosML.add(estado);
+            TypedQuery<RolJPA> queryrol = entityManager.createQuery("FROM RolJPA", RolJPA.class);
+            List<RolJPA> rolesJPA = queryrol.getResultList();
+            List<Rol> rolesML = new ArrayList<>();
+            for (RolJPA rolJPA : rolesJPA) {
+
+                Rol rol = modelMapper.map(rolJPA, Rol.class);
+                rolesML.add(rol);
             }
-            result.objects = (List<Object>) (List<?>) estadosML;
+            result.objects = (List<Object>) (List<?>) rolesML;
             result.correct = true;
         } catch (Exception ex) {
             result.correct = false;

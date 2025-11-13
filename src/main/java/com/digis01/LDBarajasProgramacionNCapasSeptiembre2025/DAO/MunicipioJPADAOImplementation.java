@@ -12,14 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MunicipioJPADAOImplementation implements IMunicipioJPA{
+public class MunicipioJPADAOImplementation implements IMunicipioJPA {
+
     @Autowired
     private EntityManager entityManager;
     @Autowired
     private ModelMapper modelMapper;
-    
+
     @Override
-    public Result GetByIdEstado(int IdEstado){
+    public Result GetByIdEstado(int IdEstado) {
         Result result = new Result();
         try {
             TypedQuery<MunicipioJPA> queryMunicipios = entityManager.createQuery(
@@ -28,19 +29,16 @@ public class MunicipioJPADAOImplementation implements IMunicipioJPA{
             List<MunicipioJPA> municipiosJPA = queryMunicipios.getResultList();
             List<Municipio> municipiosML = new ArrayList<>();
             for (MunicipioJPA municipioJPA : municipiosJPA) {
-
                 Municipio municipio = modelMapper.map(municipioJPA, Municipio.class);
                 municipiosML.add(municipio);
             }
             result.objects = (List<Object>) (List<?>) municipiosML;
             result.correct = true;
-
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
-
         return result;
     }
 }
