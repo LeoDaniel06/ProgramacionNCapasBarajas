@@ -96,6 +96,20 @@
                             <td>
                                 <strong><i class="bi bi-person-circle"></i> User Name:</strong> 
                                 <span th:text="${usuario.userName}"></span>  <br>
+                                <div class="position-relative d-inline-block">
+                            <!-- Imagen actual -->
+                            <img th:if="${usuario.imagen != null}"
+                                 th:src="'data:image/*;base64,' + ${usuario.imagen}"
+                                 alt="Imagen de usuario"
+                                 class="imagen-usuario rounded-circle"
+                                 width="100" height="100"/>
+
+                            <!-- Imagen por defecto -->
+                            <img th:if="${usuario.imagen == null}"
+                                 src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
+                                 alt="Imagen por defecto"
+                                 class="imagen-usuario rounded-circle"
+                                 width="100" height="100"/>
                             </td>
                             <td>
                                 <strong><i class="bi bi-person"></i> Nombre:</strong> 
