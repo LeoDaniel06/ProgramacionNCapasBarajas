@@ -25,10 +25,10 @@ public class EstadoJPA {
     @JoinColumn(name="idpais")
     public PaisJPA PaisJPA;
 
-    public int getIdEstado() {
-        return IdEstado;
+    public int getIdEstado(){
+        return this.IdEstado;
     }
-
+            
     public void setIdEstado(int IdEstado) {
         this.IdEstado = IdEstado;
     }
@@ -48,8 +48,4 @@ public class EstadoJPA {
     public void setPaisJPA(PaisJPA PaisJPA) {
         this.PaisJPA = PaisJPA;
     }
-
-    
-    
-    
 }

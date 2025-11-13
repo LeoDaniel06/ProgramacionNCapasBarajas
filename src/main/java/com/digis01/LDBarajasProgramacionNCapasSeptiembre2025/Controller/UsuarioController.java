@@ -56,11 +56,19 @@ public class UsuarioController {
     private ValidationService validationService;
     @Autowired
     private UsuarioJPADAOImplementation usuarioJPADAOImplementation;
+    @Autowired
+    private ColoniaJPADAOImplementation coloniaJPADAOImplementation;
+    @Autowired
+    private PaisJPADAOImplementation paisJPADAOImplementation;
+    @Autowired
+    private EstadoJPADAOImplementation estadoJPADAOImplementation;
+    @Autowired
+    private MunicipioJPADAOImplementation municipioJPADAOImplementation;
 //------------------------------------------------------USUARIO INDEX-----------------------------------------------------
 
     @GetMapping
     public String Index(Model model) {
-        Result result = usuarioDAOImplementation.GETALL();
+//        Result result = usuarioDAOImplementation.GETALL();
         Result resultJPA = usuarioJPADAOImplementation.GetAll();
         model.addAttribute("usuarios", resultJPA.objects);
         model.addAttribute("Roles", rolDAOImplementation.GETALL().objects);
@@ -136,9 +144,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/carga")
-    public String procesarCarga(@RequestParam("archivo") MultipartFile archivo,
-            Model model,
-            HttpSession session) throws IOException {
+    public String procesarCarga(@RequestParam("archivo") MultipartFile archivo,Model model,HttpSession session) throws IOException {
 
         if (archivo == null || archivo.isEmpty()) {
             model.addAttribute("mensajeError", "Debe seleccionar un archivo para cargar.");
@@ -411,7 +417,7 @@ public class UsuarioController {
         } else {
             model.addAttribute("usuario", new Usuario());
         }
-        model.addAttribute("paises", paisDAOImplementation.GETALL().objects);
+        model.addAttribute("paises", paisJPADAOImplementation.GETALL().objects);
         return "UsuarioDetail";
     }
 
@@ -419,41 +425,33 @@ public class UsuarioController {
     @GetMapping("/add")
     public String ADD(Model model) {
         Usuario usuario = new Usuario();
-//        usuario.setIdUsuario(0);
-//        usuario.Direcciones = new ArrayList<>();
-//        usuario.Direcciones.add(new Direccion());
 
         model.addAttribute("Usuario", usuario);
         model.addAttribute("roles", rolDAOImplementation.GETALL().objects);
-        model.addAttribute("paises", paisDAOImplementation.GETALL().objects);
+        model.addAttribute("paises", paisJPADAOImplementation.GETALL().objects);
 
         return "UsuarioForm";
     }
 
     @PostMapping("/add")
-    public String ADD(@Valid
-            @ModelAttribute("Usuario") Usuario usuario,
-            BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes,
-            @RequestParam("imagenFile") MultipartFile imagenFile
+    public String ADD(@Valid @ModelAttribute("Usuario") Usuario usuario,BindingResult bindingResult,Model model,RedirectAttributes redirectAttributes,@RequestParam("imagenFile") MultipartFile imagenFile
     ) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("roles", rolDAOImplementation.GETALL().objects);
-            model.addAttribute("paises", paisDAOImplementation.GETALL().objects);
+            model.addAttribute("paises", paisJPADAOImplementation.GETALL().objects);
 
             if (usuario.Direcciones.get(0).getColonia().getMunicipio().getEstado().getPais().getIdPais() > 0) {
-                model.addAttribute("estados", estadoDAOImplementation.GetByIdPais(
+                model.addAttribute("estados", estadoJPADAOImplementation.GetByIdPais(
                         usuario.Direcciones.get(0).getColonia().getMunicipio().getEstado().getPais().getIdPais()).objects);
 
                 if (usuario.Direcciones.get(0).getColonia().getMunicipio().getEstado().getIdEstado() > 0) {
-                    model.addAttribute("municipios", municipioDAOImplementation.GetByIdEstado(
+                    model.addAttribute("municipios", municipioJPADAOImplementation.GetByIdEstado(
                             usuario.Direcciones.get(0).getColonia().getMunicipio().getEstado().getIdEstado()
                     ).objects);
 
                     if (usuario.Direcciones.get(0).getColonia().getMunicipio().getIdMunicipio() > 0) {
-                        model.addAttribute("colonias", coloniaDAOImplementation.GetByIdMunicipio(
+                        model.addAttribute("colonias", coloniaJPADAOImplementation.GetByIdMunicipio(
                                 usuario.Direcciones.get(0).getColonia().getMunicipio().getIdMunicipio()
                         ).objects);
                     }
@@ -485,7 +483,7 @@ public class UsuarioController {
     @GetMapping("/Estados/{IdPais}")
     @ResponseBody
     public Result EstadosGETBYIDPais(@PathVariable int IdPais) {
-        Result result = estadoDAOImplementation.GetByIdPais(IdPais);
+        Result result = estadoJPADAOImplementation.GetByIdPais(IdPais);
         if (result.objects == null) {
             result.objects = new ArrayList<>();
         }
@@ -495,7 +493,7 @@ public class UsuarioController {
     @GetMapping("/Municipios/{IdEstado}")
     @ResponseBody
     public Result getMunicipiosByEstado(@PathVariable int IdEstado) {
-        Result result = municipioDAOImplementation.GetByIdEstado(IdEstado);
+        Result result = municipioJPADAOImplementation.GetByIdEstado(IdEstado);
         if (result.objects == null) {
             result.objects = new ArrayList<>();
         }
@@ -505,14 +503,13 @@ public class UsuarioController {
     @GetMapping("/Colonias/{IdMunicipio}")
     @ResponseBody
     public Result getColoniasByMunicipio(@PathVariable int IdMunicipio) {
-        Result result = coloniaDAOImplementation.GetByIdMunicipio(IdMunicipio);
+        Result result = coloniaJPADAOImplementation.GetByIdMunicipio(IdMunicipio);
         if (result.objects == null) {
             result.objects = new ArrayList<>();
         }
         return result;
     }
 //-----------------------------------------------------UPDATE USUARIO-----------------------------------------------------------------
-
     @PostMapping("/update")
     public String updateUsuario(@ModelAttribute("usuario") Usuario usuario, RedirectAttributes redirectAttributes) {
         Result resultUsuario = usuarioJPADAOImplementation.Update(usuario);
@@ -528,9 +525,7 @@ public class UsuarioController {
 //    -------------------------------------------------------------ADD DIRECCION-------------------------------------------------
 
     @PostMapping("/direccion/add/{idUsuario}")
-    public String addDireccion(@PathVariable int idUsuario,
-            @ModelAttribute("direccion") Direccion direccion,
-            RedirectAttributes redirectAttributes) {
+    public String addDireccion(@PathVariable int idUsuario,@ModelAttribute("direccion") Direccion direccion,RedirectAttributes redirectAttributes) {
 
         // Llamar al DAO para guardar la dirección
         Result result = usuarioJPADAOImplementation.AddDireccion(direccion, idUsuario);
@@ -547,10 +542,7 @@ public class UsuarioController {
 //--------------------------------------------------------UPDATE DIRECCION-------------------------------------------------
 
     @PostMapping("/direccion/update/{idUsuario}")
-    public String updateDireccion(
-            @PathVariable int idUsuario,
-            @ModelAttribute("direccion") Direccion direccion,
-            RedirectAttributes redirectAttributes) {
+    public String updateDireccion(@PathVariable int idUsuario,@ModelAttribute("direccion") Direccion direccion,RedirectAttributes redirectAttributes) {
 
         if (direccion.getIdDireccion() <= 0) {
             redirectAttributes.addFlashAttribute("mensajeError", "No se pudo actualizar la dirección: ID inválido.");
@@ -605,9 +597,7 @@ public class UsuarioController {
 
 //-------------------------------------IMAGEN UPDATE----------------------------------------------------------
     @PostMapping("/update-imagen")
-    public String UpdateImagen(
-            @RequestParam("idUsuario") int idUsuario,
-            @RequestParam("imagen") MultipartFile file) {
+    public String UpdateImagen(@RequestParam("idUsuario") int idUsuario,@RequestParam("imagen") MultipartFile file) {
 
         try {
             if (!file.isEmpty()) {
@@ -628,7 +618,6 @@ public class UsuarioController {
         return "redirect:/usuario/detail/" + idUsuario;
     }
 //--------------------BUCADOR DINAMICO-----------------------------
-
     @PostMapping()
     public String BuscarUsuario(@ModelAttribute("Usuario") Usuario usuario, Model model) {
         Result result = usuarioDAOImplementation.BusquedaDinamica(usuario);

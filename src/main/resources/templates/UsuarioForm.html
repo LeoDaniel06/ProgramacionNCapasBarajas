@@ -226,7 +226,6 @@
             /*<![CDATA[*/
             $(document).ready(function () {
 
-                // PREVIEW + guardar base64 en campo oculto imagenHidden
                 $("#imagenFile").on("change", function () {
                     const file = this.files[0];
                     if (!file) {
@@ -243,104 +242,6 @@
                     reader.readAsDataURL(file);
                 });
 
-//                function limpiarSelect(selectId, texto) {
-//                    $(selectId).empty().append('<option value="0" selected>' + texto + '</option>');
-//                }
-//
-//                // PAISES -> ESTADOS
-//                $("#ddlPais").change(function () {
-//                    let IdPais = $(this).val();
-//                    limpiarSelect("#ddlEstado", "Selecciona un estado");
-//                    limpiarSelect("#ddlMunicipio", "Selecciona un municipio");
-//                    limpiarSelect("#ddlColonia", "Selecciona una colonia");
-//
-//                    if (IdPais == 0)
-//                        return;
-//
-//                    $.ajax({
-//                        type: 'GET',
-//                        url: '/usuario/Estados/' + IdPais,
-//                        dataType: 'json',
-//                        success: function (data) {
-//                            if (data && data.objects) {
-//                                $.each(data.objects, function (i, estado) {
-//                                    $("#ddlEstado").append('<option value="' + estado.idEstado + '">' + estado.nombre + '</option>');
-//                                });
-//                            }
-//                        },
-//                        error: function () {
-//                            Swal.fire('Error', 'No se pudieron cargar los estados', 'error');
-//                        }
-//                    });
-//                });
-//
-//                // ESTADOS -> MUNICIPIOS
-//                $("#ddlEstado").change(function () {
-//                    let IdEstado = $(this).val();
-//                    limpiarSelect("#ddlMunicipio", "Selecciona un municipio");
-//                    limpiarSelect("#ddlColonia", "Selecciona una colonia");
-//
-//                    if (IdEstado == 0)
-//                        return;
-//
-//                    $.ajax({
-//                        type: 'GET',
-//                        url: '/usuario/Municipios/' + IdEstado,
-//                        dataType: 'json',
-//                        success: function (data) {
-//                            if (data && data.objects) {
-//                                $.each(data.objects, function (i, municipio) {
-//                                    $("#ddlMunicipio").append('<option value="' + municipio.idMunicipio + '">' + municipio.nombre + '</option>');
-//                                });
-//                            }
-//                        },
-//                        error: function () {
-//                            Swal.fire('Error', 'No se pudieron cargar los municipios', 'error');
-//                        }
-//                    });
-//                });
-//
-//                // MUNICIPIOS -> COLONIAS
-//                $("#ddlMunicipio").change(function () {
-//                    let IdMunicipio = $(this).val();
-//                    limpiarSelect("#ddlColonia", "Selecciona una colonia");
-//
-//                    if (IdMunicipio == 0)
-//                        return;
-//
-//                    $.ajax({
-//                        type: 'GET',
-//                        url: '/usuario/Colonias/' + IdMunicipio,
-//                        dataType: 'json',
-//                        success: function (data) {
-//                            if (data && data.objects) {
-//                                $.each(data.objects, function (i, colonia) {
-//                                    $("#ddlColonia").append('<option value="' + colonia.idColonia + '">' + colonia.nombre + '</option>');
-//                                });
-//                            }
-//                        },
-//                        error: function () {
-//                            Swal.fire('Error', 'No se pudieron cargar las colonias', 'error');
-//                        }
-//                    });
-//                });
-
-                // ALERTA con SweetAlert2 al seleccionar rol
-//                $("#rolUsuario").change(function () {
-//                    const selectedText = $("#rolUsuario option:selected").text();
-//                    if (selectedText && selectedText !== "Selecciona un Rol") {
-//                        Swal.fire({
-//                            title: 'Rol seleccionado',
-//                            text: 'Has seleccionado el rol: ' + selectedText,
-//                            icon: 'info',
-//                            confirmButtonText: 'Aceptar',
-//                            confirmButtonColor: '#3085d6'
-//                        });
-//                    }
-//                });
-
-            });
-            /*]]>*/
         </script>
         <script>
             $(document).ready(function () {

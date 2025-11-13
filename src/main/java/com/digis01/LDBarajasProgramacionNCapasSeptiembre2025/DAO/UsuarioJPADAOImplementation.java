@@ -24,7 +24,6 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
     @Autowired
     private ModelMapper modelMapper;
 //-----------------------------------------------------GETALL----------------------------------------------------------------------
-
     @Override
     public Result GetAll() {
 
@@ -43,7 +42,6 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         return result;
     }
 //------------------------------------------------GET BY ID -------------------------------------------------------------------
-
     @Override
     public Result GetById(int idUsuario) {
         Result result = new Result();
@@ -101,7 +99,6 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
     }
     
 //------------------------------------------------ADD--------------------------------------------------------------------------
-
     @Override
     @Transactional
     public Result Add(Usuario usuarioML) {
@@ -125,7 +122,6 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         return result;
     }
 //    -------------------------------------------ADDDIRECCION----------------------------------------------------------
-
     @Override
     @Transactional
     public Result AddDireccion(Direccion direccionML, int idUsuario) {
