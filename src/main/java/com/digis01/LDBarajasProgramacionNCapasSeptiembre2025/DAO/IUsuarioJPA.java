@@ -18,4 +18,5 @@ public interface IUsuarioJPA{
     Result DeleteDireccion(int idDireccion);
     Result UpdateImagen(int idUsuario, String NuevaImgenB64);
     Result GetById(int idUsuario);
+    Result GetDireccionBYIdDireccion(int idDireccion);
 }

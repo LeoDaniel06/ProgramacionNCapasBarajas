@@ -586,7 +586,7 @@ public class UsuarioController {
     @GetMapping("direccion/{idDireccion}")
     @ResponseBody
     public Result GetDireccionByIdDireccion(@PathVariable("idDireccion") int idDireccion) {
-        return usuarioDAOImplementation.GetDireccionByIdDireccion(idDireccion);
+        return usuarioJPADAOImplementation.GetDireccionBYIdDireccion(idDireccion);
     }
 
 //    ----------------------------------------------DIRECCION DELETE-------------------------------------------------------

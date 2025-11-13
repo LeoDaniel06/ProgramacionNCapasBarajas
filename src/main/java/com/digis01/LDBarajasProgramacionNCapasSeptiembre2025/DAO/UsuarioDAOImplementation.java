@@ -389,56 +389,6 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
         return result;
     }
 //-------------------------------------DireccionGETBYIDDirecion----------------------------------------------------------
-//    @Override
-//public Result GetDireccionByIdDireccion(int idDireccion) {
-//    Result result = new Result();
-//
-//    try {
-//        // Crear objeto Direccion
-//        Direccion direccion = new Direccion();
-//        direccion.setIdDireccion(idDireccion);
-//        direccion.setCalle("Reforma");
-//        direccion.setNumeroInterior("14");
-//        direccion.setNumeroExterior("199");
-//
-//        // Crear objeto Pais
-//        Pais pais = new Pais();
-//        pais.setIdPais(1);        // ID de prueba
-//        pais.setNombre("México");
-//
-//        // Crear objeto Estado
-//        Estado estado = new Estado();
-//        estado.setIdEstado(10);   // ID de prueba
-//        estado.setNombre("Ciudad de México");
-//        estado.setPais(pais);
-//
-//        // Crear objeto Municipio
-//        Municipio municipio = new Municipio();
-//        municipio.setIdMunicipio(100); // ID de prueba
-//        municipio.setNombre("Benito Juárez");
-//        municipio.setEstado(estado);
-//
-//        // Crear objeto Colonia
-//        Colonia colonia = new Colonia();
-//        colonia.setIdColonia(1000); // ID de prueba
-//        colonia.setNombre("Del Valle");
-//        colonia.setMunicipio(municipio);
-//
-//        // Asignar colonia a la dirección
-//        direccion.setColonia(colonia);
-//
-//        // Preparar resultado
-//        result.object = direccion;
-//        result.correct = true;
-//
-//    } catch (Exception e) {
-//        result.correct = false;
-//        result.errorMessage = "Error al crear dirección de prueba: " + e.getMessage();
-//    }
-//
-//    return result;
-//}
-
     @Override
     public Result GetDireccionByIdDireccion(int idDireccion) {
         Result result = new Result();
