@@ -400,7 +400,8 @@ public class UsuarioController {
 //------------------------------------------------------USUARIODETAIL----------------------------------------------------------
     @GetMapping("/detail/{id}")
     public String getUsuarioDetail(@PathVariable int id, Model model) {
-        Result result = usuarioDAOImplementation.GETBYID(id);
+//        Result result = usuarioDAOImplementation.GETBYID(id);
+        Result result = usuarioJPADAOImplementation.GetById(id);
 
         if (result.correct && result.object != null) {
             Usuario usuario = (Usuario) result.object;

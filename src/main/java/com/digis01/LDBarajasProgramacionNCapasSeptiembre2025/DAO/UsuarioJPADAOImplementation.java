@@ -42,8 +42,35 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         }
         return result;
     }
+//------------------------------------------------GET BY ID -------------------------------------------------------------------
 
-//------------------------------------------------ADD---------------------------------------
+    @Override
+    public Result GetById(int idUsuario) {
+        Result result = new Result();
+
+        try {
+            UsuarioJPA usuarioJPA = entityManager.find(UsuarioJPA.class, idUsuario);
+            if (usuarioJPA != null) {
+                usuarioJPA.getRolJPA();
+                usuarioJPA.getDireccionesJPA();
+                for(DireccionJPA direccion : usuarioJPA.getDireccionesJPA()) {
+                    if(direccion.getColoniaJPA() != null){
+                        direccion.getColoniaJPA().getNombre();
+                    }
+                }
+            }
+            Usuario usuarioML = modelMapper.map(usuarioJPA, Usuario.class);
+            result.object = usuarioML;
+            result.correct = true;
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        return result;
+    }
+//------------------------------------------------ADD--------------------------------------------------------------------------
+
     @Override
     @Transactional
     public Result Add(Usuario usuarioML) {
@@ -67,20 +94,21 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         return result;
     }
 //    -------------------------------------------ADDDIRECCION----------------------------------------------------------
+
     @Override
     @Transactional
-    public Result AddDireccion(Direccion direccionML, int idUsuario){
+    public Result AddDireccion(Direccion direccionML, int idUsuario) {
         Result result = new Result();
-        
+
         try {
             //Mapea ml a jpa
-            DireccionJPA direccionJPA = modelMapper.map(direccionML,DireccionJPA.class);
+            DireccionJPA direccionJPA = modelMapper.map(direccionML, DireccionJPA.class);
             //Busca y asiga idusuario
             UsuarioJPA usuarioJPA = entityManager.find(UsuarioJPA.class, idUsuario);
             direccionJPA.setUsuarioJPA(usuarioJPA);
             //busca y asigana colonia
-            if(direccionML.getColonia() != null && direccionML.getColonia().getIdColonia()>0){
-                ColoniaJPA coloniaJPA = entityManager.find(ColoniaJPA.class,direccionML.getColonia().getIdColonia());
+            if (direccionML.getColonia() != null && direccionML.getColonia().getIdColonia() > 0) {
+                ColoniaJPA coloniaJPA = entityManager.find(ColoniaJPA.class, direccionML.getColonia().getIdColonia());
                 direccionJPA.setColoniaJPA(coloniaJPA);
             }
             //guaradar la direccion
@@ -92,7 +120,7 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
-        
+
         return result;
     }
 
@@ -177,18 +205,18 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
 
         return result;
     }
-    
+
 //    -------------------------------------UPDATE IMAGEN--------------------------------------------------------------
     @Override
     @Transactional
-    public Result UpdateImagen(int idUsuario, String NuevaImgenB64){
+    public Result UpdateImagen(int idUsuario, String NuevaImgenB64) {
         Result result = new Result();
         try {
             UsuarioJPA usuarioJPA = entityManager.find(UsuarioJPA.class, idUsuario);
-            if (usuarioJPA!=null) {
+            if (usuarioJPA != null) {
                 usuarioJPA.setImagen(NuevaImgenB64);
                 result.correct = true;
-            } else{
+            } else {
                 result.correct = false;
                 result.errorMessage = "Usuario no encontrado";
             }
@@ -199,20 +227,20 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         }
         return result;
     }
-    
+
 //    -------------------------------------DELETE USUARIO---------------------------------------------------
     @Override
     @Transactional
-    public Result DeleteUsuario(int idUsuario){
+    public Result DeleteUsuario(int idUsuario) {
         Result result = new Result();
-       
+
         try {
             UsuarioJPA usuarioJPA = entityManager.find(UsuarioJPA.class, idUsuario);
             if (usuarioJPA != null) {
                 entityManager.remove(usuarioJPA);
                 entityManager.flush();
                 result.correct = true;
-            } else{
+            } else {
                 result.correct = false;
                 result.errorMessage = "Usuario no existe";
             }
@@ -223,11 +251,11 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         }
         return result;
     }
-    
+
 //    -----------------------------------DELETE DIRECCION-------------------------------------------------------
     @Override
     @Transactional
-    public Result DeleteDireccion(int idDireccion){
+    public Result DeleteDireccion(int idDireccion) {
         Result result = new Result();
         try {
             DireccionJPA direccionJPA = entityManager.find(DireccionJPA.class, idDireccion);
@@ -235,7 +263,7 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
                 entityManager.remove(direccionJPA);
                 entityManager.flush();
                 result.correct = true;
-            } else{
+            } else {
                 result.correct = false;
                 result.errorMessage = "Direccion no existe";
             }
