@@ -126,7 +126,7 @@ public class UsuarioController {
             }
 
             // Insertar directamente
-            Result result = usuarioDAOImplementation.AddALL(usuarios);
+            Result result = usuarioJPADAOImplementation.AddAll(usuarios);
 
             if (result.correct) {
                 model.addAttribute("mensajeExito", "Usuarios procesados correctamente desde el archivo '" + nombreArchivo + "'.");

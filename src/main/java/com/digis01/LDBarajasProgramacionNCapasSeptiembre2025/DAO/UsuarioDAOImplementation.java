@@ -21,57 +21,55 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class UsuarioDAOImplementation implements IUsuarioDAO {
-    
-    
-//---------------------------CARGA MASIVA-------------------------------------------------
-    
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public Result AddALL(List<Usuario> usuarios) {
-        Result result = new Result();
-
-    try {
-        jdbcTemplate.batchUpdate("{CALL CargaMasiva(?,?,?,?,?,?,?,?,?,?,?,?)}",
-                usuarios,
-                usuarios.size(),
-                (callableStatement, usuario) -> {
-
-                    callableStatement.setString(1, usuario.getUserName());
-                    callableStatement.setString(2, usuario.getNombreUsuario());
-                    callableStatement.setString(3, usuario.getApellidoPat());
-                    callableStatement.setString(4, usuario.getApellidoMat());
-                    callableStatement.setString(5, usuario.getEmail());
-                    callableStatement.setString(6, usuario.getPassword());
-
-                    if (usuario.getFechaNacimiento() != null) {
-                        callableStatement.setDate(7, new java.sql.Date(usuario.getFechaNacimiento().getTime()));
-                    } else {
-                        callableStatement.setNull(7, java.sql.Types.DATE);
-                    }
-
-                    callableStatement.setString(8, usuario.getSexo());
-                    callableStatement.setString(9, usuario.getTelefono());
-                    callableStatement.setString(10, usuario.getCelular());
-                    callableStatement.setString(11, usuario.getCurp());
-                    callableStatement.setInt(12, usuario.getRol() != null ? usuario.getRol().getIdRol() : 0);
-
-                });
-
-        result.correct = true;
-
-    } catch (Exception ex) {
-        result.correct = false;
-        result.errorMessage = ex.getLocalizedMessage();
-        result.ex = ex;
-    }
-
-    return result;
-    }
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private ColoniaDAOImplementation coloniaDAOImplementation;
+
+//---------------------------CARGA MASIVA-------------------------------------------------
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result AddALL(List<Usuario> usuarios) {
+        Result result = new Result();
+
+        try {
+            jdbcTemplate.batchUpdate("{CALL CargaMasiva(?,?,?,?,?,?,?,?,?,?,?,?)}",
+                    usuarios,
+                    usuarios.size(),
+                    (callableStatement, usuario) -> {
+
+                        callableStatement.setString(1, usuario.getUserName());
+                        callableStatement.setString(2, usuario.getNombreUsuario());
+                        callableStatement.setString(3, usuario.getApellidoPat());
+                        callableStatement.setString(4, usuario.getApellidoMat());
+                        callableStatement.setString(5, usuario.getEmail());
+                        callableStatement.setString(6, usuario.getPassword());
+
+                        if (usuario.getFechaNacimiento() != null) {
+                            callableStatement.setDate(7, new java.sql.Date(usuario.getFechaNacimiento().getTime()));
+                        } else {
+                            callableStatement.setNull(7, java.sql.Types.DATE);
+                        }
+
+                        callableStatement.setString(8, usuario.getSexo());
+                        callableStatement.setString(9, usuario.getTelefono());
+                        callableStatement.setString(10, usuario.getCelular());
+                        callableStatement.setString(11, usuario.getCurp());
+                        callableStatement.setInt(12, usuario.getRol() != null ? usuario.getRol().getIdRol() : 0);
+
+                    });
+
+            result.correct = true;
+
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+
+        return result;
+    }
 //---------------------------------------------------GETALL--------------------------------------------------------------------------
 
     @Override
@@ -389,6 +387,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
         return result;
     }
 //-------------------------------------DireccionGETBYIDDirecion----------------------------------------------------------
+
     @Override
     public Result GetDireccionByIdDireccion(int idDireccion) {
         Result result = new Result();
@@ -499,7 +498,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
 //----------------------------------------BUSQUEDA DINAMICA FILTRADA----------------------------------------------------
     @Override
     public Result BusquedaDinamica(Usuario usuario) {
-        return jdbcTemplate.execute("CALL UsuarioBusquedaDinamica(?,?,?,?,?)", (CallableStatementCallback<Result>) callableStatement ->{
+        return jdbcTemplate.execute("CALL UsuarioBusquedaDinamica(?,?,?,?,?)", (CallableStatementCallback<Result>) callableStatement -> {
             Result result = new Result();
             try {
                 callableStatement.setString(1, usuario.getNombreUsuario());
@@ -508,47 +507,47 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
                 callableStatement.setInt(4, usuario.Rol.getIdRol());
                 callableStatement.registerOutParameter(5, java.sql.Types.REF_CURSOR);
                 callableStatement.execute();
-                
+
                 ResultSet resultSet = (ResultSet) callableStatement.getObject(5);
                 result.objects = new ArrayList<>();
                 int IdUsuario = 0;
-                
-                while (resultSet.next()) {                    
+
+                while (resultSet.next()) {
                     IdUsuario = resultSet.getInt("IdUsuario");
-                    if (!result.objects.isEmpty() && IdUsuario == ((Usuario)(result.objects.get(result.objects.size()-1))).getIdUsuario()) {
-                        
+                    if (!result.objects.isEmpty() && IdUsuario == ((Usuario) (result.objects.get(result.objects.size() - 1))).getIdUsuario()) {
+
                         Direccion direccion = new Direccion();
                         direccion.setIdDireccion(resultSet.getInt("IdDireccion"));
                         direccion.setCalle(resultSet.getString("Calle"));
                         direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
                         direccion.setNumeroExterior(resultSet.getString("NumeroExterior"));
-                        
+
                         Colonia colonia = new Colonia();
                         colonia.setIdColonia(resultSet.getInt("IdColonia"));
                         colonia.setNombre(resultSet.getString("NombreColonia"));
                         colonia.setCodigoPostal(resultSet.getString("CodigoPostal"));
-                        
+
                         Municipio municipio = new Municipio();
                         municipio.setIdMunicipio(resultSet.getInt("IdMunicipio"));
                         municipio.setNombre(resultSet.getString("NombreMunicipio"));
-                        
+
                         Estado estado = new Estado();
                         estado.setIdEstado(resultSet.getInt("IdEstado"));
                         estado.setNombre(resultSet.getString("NombreEstado"));
-                        
+
                         Pais pais = new Pais();
                         pais.setIdPais(resultSet.getInt("IdPais"));
                         pais.setNombre(resultSet.getString("NombrePais"));
-                        
+
                         estado.setPais(pais);
                         municipio.setEstado(estado);
                         colonia.setMunicipio(municipio);
                         direccion.setColonia(colonia);
-                        
-                        ((Usuario)(result.objects.get(result.objects.size()-1))).Direcciones.add(direccion);  
-                    } else{
+
+                        ((Usuario) (result.objects.get(result.objects.size() - 1))).Direcciones.add(direccion);
+                    } else {
                         Usuario usuario2 = new Usuario();
-                        
+
                         usuario2.setIdUsuario(resultSet.getInt("idUsuario"));
                         usuario2.setUserName(resultSet.getString("UserName"));
                         usuario2.setNombreUsuario(resultSet.getString("NombreUsuario"));
@@ -562,45 +561,45 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
                         usuario2.setCelular(resultSet.getString("Celular"));
                         usuario2.setCurp(resultSet.getString("Curp"));
                         usuario2.setImagen(resultSet.getString("Imagen"));
-                        
+
                         usuario2.Rol = new Rol();
                         usuario2.Rol.setIdRol(resultSet.getInt("IdRol"));
                         usuario2.Rol.setNombre(resultSet.getString("NombreRol"));
-                        
+
                         usuario2.Direcciones = new ArrayList<>();
-                        
+
                         Direccion direccion = new Direccion();
                         direccion.setIdDireccion(resultSet.getInt("IdDireccion"));
                         direccion.setCalle(resultSet.getString("Calle"));
                         direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
                         direccion.setNumeroExterior(resultSet.getString("NumeroExterior"));
-                        
+
                         Colonia colonia = new Colonia();
                         colonia.setIdColonia(resultSet.getInt("IdColonia"));
                         colonia.setNombre(resultSet.getString("NombreColonia"));
                         colonia.setCodigoPostal(resultSet.getString("CodigoPostal"));
-                        
+
                         Municipio municipio = new Municipio();
                         municipio.setIdMunicipio(resultSet.getInt("IdMunicipio"));
                         municipio.setNombre(resultSet.getString("NombreMunicipio"));
-                        
+
                         Estado estado = new Estado();
                         estado.setIdEstado(resultSet.getInt("IdEstado"));
                         estado.setNombre(resultSet.getString("NombreEstado"));
-                        
+
                         Pais pais = new Pais();
                         pais.setIdPais(resultSet.getInt("IdPais"));
                         pais.setNombre(resultSet.getString("NombrePais"));
-                        
+
                         estado.setPais(pais);
                         municipio.setEstado(estado);
                         colonia.setMunicipio(municipio);
                         direccion.setColonia(colonia);
-                        
+
                         usuario2.Direcciones.add(direccion);
                         result.objects.add(usuario2);
                     }
-                    
+
                 }
                 result.correct = true;
             } catch (Exception ex) {
@@ -610,5 +609,5 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
             }
             return result;
         });
-        }
+    }
 }

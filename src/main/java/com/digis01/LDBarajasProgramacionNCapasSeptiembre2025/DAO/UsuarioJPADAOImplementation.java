@@ -2,6 +2,7 @@ package com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.DAO;
 
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.JPA.ColoniaJPA;
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.JPA.DireccionJPA;
+import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.JPA.RolJPA;
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.JPA.UsuarioJPA;
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.ML.Direccion;
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.ML.Result;
@@ -24,6 +25,7 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
     @Autowired
     private ModelMapper modelMapper;
 //-----------------------------------------------------GETALL----------------------------------------------------------------------
+
     @Override
     public Result GetAll() {
 
@@ -31,8 +33,7 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         try {
             TypedQuery<UsuarioJPA> queryUsuario = entityManager.createQuery("FROM UsuarioJPA", UsuarioJPA.class);
             List<UsuarioJPA> usuariosJPA = queryUsuario.getResultList();
-            List<Usuario> usuariosML = usuariosJPA.stream().map(usuario -> modelMapper.map
-            (usuario, Usuario.class)).collect(Collectors.toList());
+            List<Usuario> usuariosML = usuariosJPA.stream().map(usuario -> modelMapper.map(usuario, Usuario.class)).collect(Collectors.toList());
             result.objects = (List<Object>) (List<?>) usuariosML;
             result.correct = true;
         } catch (Exception ex) {
@@ -43,6 +44,7 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         return result;
     }
 //------------------------------------------------GET BY ID -------------------------------------------------------------------
+
     @Override
     public Result GetById(int idUsuario) {
         Result result = new Result();
@@ -52,8 +54,8 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
             if (usuarioJPA != null) {
                 usuarioJPA.getRolJPA();
                 usuarioJPA.getDireccionesJPA();
-                for(DireccionJPA direccion : usuarioJPA.getDireccionesJPA()) {
-                    if(direccion.getColoniaJPA() != null){
+                for (DireccionJPA direccion : usuarioJPA.getDireccionesJPA()) {
+                    if (direccion.getColoniaJPA() != null) {
                         direccion.getColoniaJPA().getNombre();
                     }
                 }
@@ -68,37 +70,37 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         }
         return result;
     }
-    
+
 //------------------------------------------------DIRECCION GETBYID DIRECCION--------------------------------------------------
     @Override
     @Transactional
-    public Result GetDireccionBYIdDireccion(int idDireccion){
+    public Result GetDireccionBYIdDireccion(int idDireccion) {
         Result result = new Result();
-        
+
         try {
             DireccionJPA direccionJPA = entityManager.find(DireccionJPA.class, idDireccion);
             if (direccionJPA != null) {
-                if(direccionJPA.getColoniaJPA() != null){
+                if (direccionJPA.getColoniaJPA() != null) {
                     direccionJPA.getColoniaJPA().getNombre();
                 }
                 if (direccionJPA.getUsuarioJPA() != null) {
                     direccionJPA.getUsuarioJPA().getIdUsuario();
                 }
                 Direccion direccionML = modelMapper.map(direccionJPA, Direccion.class);
-                result.object =direccionML;
+                result.object = direccionML;
                 result.correct = true;
             } else {
                 result.correct = false;
                 result.errorMessage = "No se encontro ninguna direccion";
             }
         } catch (Exception ex) {
-            result.correct =false;
+            result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
         return result;
     }
-    
+
 //------------------------------------------------ADD--------------------------------------------------------------------------
     @Override
     @Transactional
@@ -123,6 +125,7 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         return result;
     }
 //    -------------------------------------------ADDDIRECCION----------------------------------------------------------
+
     @Override
     @Transactional
     public Result AddDireccion(Direccion direccionML, int idUsuario) {
@@ -302,5 +305,38 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         }
         return result;
     }
+//-----------------------------------------------CARGA MASIVA-----------------------------------------------
 
+    @Override
+    @Transactional
+    public Result AddAll(List<Usuario> usuarios) {
+        Result result = new Result();
+        try {
+            int index = 0;
+            for (Usuario usuarioML : usuarios) {
+                UsuarioJPA usuarioJPA = modelMapper.map(usuarioML, UsuarioJPA.class);
+                if (usuarioML.getFechaNacimiento() == null) {
+                    usuarioJPA.setFechaNacimiento(null);
+                }
+                if (usuarioML.getRol() != null && usuarioML.getRol().getIdRol() > 0) {
+                    RolJPA rol = entityManager.find(RolJPA.class, usuarioML.getRol().getIdRol());
+                    usuarioJPA.setRolJPA(rol);
+                } else {
+                    usuarioJPA.setRolJPA(null);
+                }
+                entityManager.persist(usuarioJPA);
+                if (index % 50 == 0) {
+                    entityManager.flush();
+                    entityManager.clear();
+                }
+                index++;
+                result.correct = true;
+            }
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        return result;
+    }
 }
