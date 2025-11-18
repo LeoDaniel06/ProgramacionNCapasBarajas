@@ -1,4 +1,3 @@
-
 package com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.DAO;
 
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.ML.Direccion;
@@ -21,4 +20,5 @@ public interface IUsuarioJPA{
     Result GetById(int idUsuario);
     Result GetDireccionBYIdDireccion(int idDireccion);
     Result AddAll(List<Usuario>usuarios);
+    Result BusquedaDinamica(Usuario usuario);
 }

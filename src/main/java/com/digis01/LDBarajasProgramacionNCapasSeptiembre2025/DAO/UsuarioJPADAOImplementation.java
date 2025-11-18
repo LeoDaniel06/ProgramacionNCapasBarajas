@@ -9,7 +9,10 @@ import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.ML.Result;
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.ML.Usuario;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -337,6 +340,84 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
+        return result;
+    }
+//------------------------------------------BUSQUEDA DINAMICA--------------------------------------------------------------------
+
+    @Override
+    public Result BusquedaDinamica(Usuario usuario) {
+        Result result = new Result();
+
+        try {
+            String jpql = "SELECT u FROM UsuarioJPA u "
+                    + "LEFT JOIN FETCH u.rol r "
+                    + "LEFT JOIN FETCH u.direcciones d "
+                    + "LEFT JOIN FETCH d.colonia c "
+                    + "LEFT JOIN FETCH c.municipio m "
+                    + "LEFT JOIN FETCH m.estado e "
+                    + "LEFT JOIN FETCH e.pais p "
+                    + "WHERE 1 = 1 ";
+
+            // IF dinámico como tu procedure:
+            if (usuario.getNombreUsuario() != null && !usuario.getNombreUsuario().isEmpty()) {
+                jpql += " AND LOWER(u.nombre) LIKE LOWER(:nombre) ";
+            }
+
+            if (usuario.getApellidoPat() != null && !usuario.getApellidoPat().isEmpty()) {
+                jpql += " AND LOWER(u.apellidoPat) LIKE LOWER(:apellidoPat) ";
+            }
+
+            if (usuario.getApellidoMat() != null && !usuario.getApellidoMat().isEmpty()) {
+                jpql += " AND LOWER(u.apellidoMat) LIKE LOWER(:apellidoMat) ";
+            }
+
+            if (usuario.getRol() != null && usuario.getRol().getIdRol() != 0) {
+                jpql += " AND r.idRol = :idRol ";
+            }
+
+            jpql += " ORDER BY u.idUsuario ";
+
+            TypedQuery<UsuarioJPA> query = entityManager.createQuery(jpql, UsuarioJPA.class);
+
+            // Seteo dinámico EXACTO como tu SP
+            if (usuario.getNombreUsuario() != null && !usuario.getNombreUsuario().isEmpty()) {
+                query.setParameter("nombre", "%" + usuario.getNombreUsuario() + "%");
+            }
+
+            if (usuario.getApellidoPat() != null && !usuario.getApellidoPat().isEmpty()) {
+                query.setParameter("apellidoPat", "%" + usuario.getApellidoPat() + "%");
+            }
+
+            if (usuario.getApellidoMat() != null && !usuario.getApellidoMat().isEmpty()) {
+                query.setParameter("apellidoMat", "%" + usuario.getApellidoMat() + "%");
+            }
+
+            if (usuario.getRol() != null && usuario.getRol().getIdRol() != 0) {
+                query.setParameter("idRol", usuario.getRol().getIdRol());
+            }
+
+            List<UsuarioJPA> usuariosJPA = query.getResultList();
+
+            // Evitar duplicados por los JOIN FETCH
+            Set<UsuarioJPA> setUsuarios = new LinkedHashSet<>(usuariosJPA);
+            usuariosJPA = new ArrayList<>(setUsuarios);
+
+            // Mapear tu ML exactamente igual que antes
+            List<Usuario> usuariosML = new ArrayList<>();
+            for (UsuarioJPA usuarioJPA : usuariosJPA) {
+                Usuario u = modelMapper.map(usuarioJPA, Usuario.class);
+                usuariosML.add(u);
+            }
+
+            result.objects = (List<Object>) (List<?>) usuariosML;
+            result.correct = true;
+
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+
         return result;
     }
 }

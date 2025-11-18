@@ -622,9 +622,9 @@ public class UsuarioController {
 //--------------------BUCADOR DINAMICO-----------------------------
     @PostMapping()
     public String BuscarUsuario(@ModelAttribute("Usuario") Usuario usuario, Model model) {
-        Result result = usuarioDAOImplementation.BusquedaDinamica(usuario);
+        Result result = usuarioJPADAOImplementation.BusquedaDinamica(usuario);
         model.addAttribute("usuarios", result.objects);
-        model.addAttribute("Roles", rolDAOImplementation.GETALL().objects);
+        model.addAttribute("Roles", rolJPADAOImplementation.GETALL().objects);
         model.addAttribute("Usuario", usuario);
         return "UsuarioIndex";
     }
