@@ -349,69 +349,76 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         Result result = new Result();
 
         try {
-            String jpql = "SELECT u FROM UsuarioJPA u "
-                    + "LEFT JOIN FETCH u.rol r "
-                    + "LEFT JOIN FETCH u.direcciones d "
-                    + "LEFT JOIN FETCH d.colonia c "
-                    + "LEFT JOIN FETCH c.municipio m "
-                    + "LEFT JOIN FETCH m.estado e "
-                    + "LEFT JOIN FETCH e.pais p "
-                    + "WHERE 1 = 1 ";
+            String queryValidar = "FROM UsuarioJPA usuarioJPA";
+            boolean filtro = false;
 
-            // IF dinámico como tu procedure:
-            if (usuario.getNombreUsuario() != null && !usuario.getNombreUsuario().isEmpty()) {
-                jpql += " AND LOWER(u.nombre) LIKE LOWER(:nombre) ";
+            if (usuario.getNombreUsuario()!= null && !usuario.getNombreUsuario().isEmpty()) {
+                if (!filtro) {
+                    queryValidar = queryValidar + " WHERE LOWER(usuarioJPA.Nombre) LIKE :nombre";
+                    filtro = true;
+                } else {
+                    queryValidar = queryValidar + " AND LOWER(usuarioJPA.Nombre) LIKE :nombre";
+                }
             }
 
             if (usuario.getApellidoPat() != null && !usuario.getApellidoPat().isEmpty()) {
-                jpql += " AND LOWER(u.apellidoPat) LIKE LOWER(:apellidoPat) ";
+                if (!filtro) {
+                    queryValidar = queryValidar + " WHERE LOWER(usuarioJPA.ApellidoPaterno) LIKE :apellidoPaterno";
+                    filtro = true;
+                } else {
+                    queryValidar = queryValidar + " AND LOWER(usuarioJPA.ApellidoPaterno) LIKE :apellidoPaterno";
+                }
             }
 
             if (usuario.getApellidoMat() != null && !usuario.getApellidoMat().isEmpty()) {
-                jpql += " AND LOWER(u.apellidoMat) LIKE LOWER(:apellidoMat) ";
+                if (!filtro) {
+                    queryValidar = queryValidar + " WHERE LOWER(usuarioJPA.ApellidoMaterno) LIKE :apellidoMaterno";
+                    filtro = true;
+                } else {
+                    queryValidar = queryValidar + " AND LOWER(usuarioJPA.ApellidoMaterno) LIKE :apellidoMaterno";
+                }
             }
 
-            if (usuario.getRol() != null && usuario.getRol().getIdRol() != 0) {
-                jpql += " AND r.idRol = :idRol ";
+            if (usuario.Rol != null && usuario.Rol.getIdRol() > 0) {
+                if (!filtro) {
+                    queryValidar = queryValidar + " WHERE usuarioJPA.RolJPA.IdRol = :idRol";
+                    filtro = true;
+                } else {
+                    queryValidar = queryValidar + " AND usuarioJPA.RolJPA.IdRol = :idRol";
+                }
             }
 
-            jpql += " ORDER BY u.idUsuario ";
+            queryValidar = queryValidar + " ORDER BY usuarioJPA.IdUsuario";
 
-            TypedQuery<UsuarioJPA> query = entityManager.createQuery(jpql, UsuarioJPA.class);
+            TypedQuery<UsuarioJPA> queryBuscar = entityManager.createQuery(queryValidar, UsuarioJPA.class);
 
-            // Seteo dinámico EXACTO como tu SP
-            if (usuario.getNombreUsuario() != null && !usuario.getNombreUsuario().isEmpty()) {
-                query.setParameter("nombre", "%" + usuario.getNombreUsuario() + "%");
+            if (usuario.getNombreUsuario()!= null && !usuario.getNombreUsuario().isEmpty()) {
+                queryBuscar.setParameter("nombre", "%" + usuario.getNombreUsuario()+ "%");
             }
 
             if (usuario.getApellidoPat() != null && !usuario.getApellidoPat().isEmpty()) {
-                query.setParameter("apellidoPat", "%" + usuario.getApellidoPat() + "%");
+                queryBuscar.setParameter("apellidoPaterno", "%" + usuario.getApellidoPat() + "%");
             }
 
             if (usuario.getApellidoMat() != null && !usuario.getApellidoMat().isEmpty()) {
-                query.setParameter("apellidoMat", "%" + usuario.getApellidoMat() + "%");
+                queryBuscar.setParameter("apellidoMaterno", "%" + usuario.getApellidoMat() + "%");
+            }
+            if (usuario.Rol != null && usuario.Rol.getIdRol() > 0) {
+                queryBuscar.setParameter("idRol",  usuario.Rol.getIdRol());
             }
 
-            if (usuario.getRol() != null && usuario.getRol().getIdRol() != 0) {
-                query.setParameter("idRol", usuario.getRol().getIdRol());
-            }
+            List<UsuarioJPA> usuariosJPA = queryBuscar.getResultList();
+            List<Usuario> usuarios = new ArrayList<>();
 
-            List<UsuarioJPA> usuariosJPA = query.getResultList();
-
-            // Evitar duplicados por los JOIN FETCH
-            Set<UsuarioJPA> setUsuarios = new LinkedHashSet<>(usuariosJPA);
-            usuariosJPA = new ArrayList<>(setUsuarios);
-
-            // Mapear tu ML exactamente igual que antes
-            List<Usuario> usuariosML = new ArrayList<>();
             for (UsuarioJPA usuarioJPA : usuariosJPA) {
-                Usuario u = modelMapper.map(usuarioJPA, Usuario.class);
-                usuariosML.add(u);
+                Usuario usuario2 = modelMapper.map(usuarioJPA, Usuario.class);
+//                usuario2.Rol = modelMapper.map(usuarioJPA.RolJPA, Rol.class);
+
+                usuarios.add(usuario2);
             }
 
-            result.objects = (List<Object>) (List<?>) usuariosML;
+            result.objects = (List<Object>) (List<?>) usuarios;
             result.correct = true;
-
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
