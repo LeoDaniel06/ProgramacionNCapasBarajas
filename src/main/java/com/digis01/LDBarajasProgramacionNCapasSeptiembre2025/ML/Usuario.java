@@ -117,7 +117,7 @@ public class Usuario {
     public String getUserName() { 
         return UserName; 
     }
-    public void setUserName(String UserName) { 
+    public void setuserName(String UserName) { 
         this.UserName = UserName; 
     }
 

@@ -254,7 +254,7 @@ public class UsuarioController {
                 }
 
                 Usuario usuario = new Usuario();
-                usuario.setUserName(campos[0]);
+                usuario.setuserName(campos[0]);
                 usuario.setNombreUsuario(campos[1]);
                 usuario.setApellidoPat(campos[2]);
                 usuario.setApellidoMat(campos[3]);
@@ -304,7 +304,7 @@ public class UsuarioController {
                 }
                 Usuario usuario = new Usuario();
 
-                usuario.setUserName(getCellValue(row.getCell(0)));
+                usuario.setuserName(getCellValue(row.getCell(0)));
                 usuario.setNombreUsuario(getCellValue(row.getCell(1)));
                 usuario.setApellidoPat(getCellValue(row.getCell(2)));
                 usuario.setApellidoMat(getCellValue(row.getCell(3)));

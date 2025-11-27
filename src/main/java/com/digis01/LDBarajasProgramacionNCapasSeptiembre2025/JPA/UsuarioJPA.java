@@ -25,7 +25,7 @@ public class UsuarioJPA {
     private int idUsuario;
     
     @Column(name="username")
-    private String UserName;
+    private String userName;
     
     @Column(name="nombre")
     private String Nombre;
@@ -76,12 +76,12 @@ public class UsuarioJPA {
         this.idUsuario = idUsuario;
     }
 
-    public String getUserName() {
-        return UserName;
+    public String getuserName() {
+        return userName;
     }
 
-    public void setUserName(String UserName) {
-        this.UserName = UserName;
+    public void setuserName(String userName) {
+        this.userName = userName;
     }
 
     public String getNombre() {

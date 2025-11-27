@@ -99,7 +99,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
                     } else {
                         Usuario usuario = new Usuario();
                         usuario.setIdUsuario(resultSet.getInt("idUsuario"));
-                        usuario.setUserName(resultSet.getString("UserName"));
+                        usuario.setuserName(resultSet.getString("UserName"));
                         usuario.setNombreUsuario(resultSet.getString("NombreUsuario"));
                         usuario.setApellidoPat(resultSet.getString("ApellidoPat"));
                         usuario.setApellidoMat(resultSet.getString("ApellidoMat"));
@@ -152,7 +152,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
 
                 if (rsUsuario.next()) {
                     usuario.setIdUsuario(rsUsuario.getInt("idUsuario"));
-                    usuario.setUserName(rsUsuario.getString("UserName"));
+                    usuario.setuserName(rsUsuario.getString("UserName"));
                     usuario.setNombreUsuario(rsUsuario.getString("NombreUsuario"));
                     usuario.setApellidoPat(rsUsuario.getString("ApellidoPat"));
                     usuario.setApellidoMat(rsUsuario.getString("ApellidoMat"));
@@ -549,7 +549,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
                         Usuario usuario2 = new Usuario();
 
                         usuario2.setIdUsuario(resultSet.getInt("idUsuario"));
-                        usuario2.setUserName(resultSet.getString("UserName"));
+                        usuario2.setuserName(resultSet.getString("UserName"));
                         usuario2.setNombreUsuario(resultSet.getString("NombreUsuario"));
                         usuario2.setApellidoPat(resultSet.getString("ApellidoPat"));
                         usuario2.setApellidoMat(resultSet.getString("ApellidoMat"));
