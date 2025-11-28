@@ -22,18 +22,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(configurer -> configurer
+                .requestMatchers("/login", "/usuario/login").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                 .requestMatchers("/usuario/**")
                 .hasAnyRole("Asistente", "Administrador", "Gerente", "Subgerente", "Colaborador")
-                .anyRequest().authenticated())
-                .formLogin(form -> form
-                .defaultSuccessUrl("/usuario", true)
+                .anyRequest().authenticated()
                 )
+                
+                .formLogin(form -> form
+                .loginPage("/usuario/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/usuario", true)
+                .permitAll()
+                )
+                
+                .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/usuario/login?logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+                )
+                
                 .userDetailsService(userDetailsJPAService);
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return  new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

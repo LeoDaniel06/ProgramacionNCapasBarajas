@@ -427,4 +427,30 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
 
         return result;
     }
+//-------------------------------------------UPDATE STATUS-----------------------------------------------
+    @Override
+    @Transactional
+    public Result UpdateStatus(int idUsuario, int status) {
+    Result result = new Result();
+
+        try {
+            UsuarioJPA usuario = entityManager.find(UsuarioJPA.class, idUsuario);
+
+            if (usuario == null) {
+                result.correct = false;
+                result.errorMessage = "Usuario no encontrado";
+                return result;
+            }
+
+            usuario.setStatus(status);
+            entityManager.flush();
+
+            result.correct = true;
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getMessage();
+        }
+
+        return result;
+    }
 }

@@ -21,4 +21,5 @@ public interface IUsuarioJPA{
     Result GetDireccionBYIdDireccion(int idDireccion);
     Result AddAll(List<Usuario>usuarios);
     Result BusquedaDinamica(Usuario usuario);
+    Result UpdateStatus(int idUsuario, int status);
 }

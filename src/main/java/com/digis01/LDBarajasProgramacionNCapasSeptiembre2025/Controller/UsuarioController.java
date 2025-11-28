@@ -1,8 +1,12 @@
 package com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.Controller;
 
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.DAO.*;
+import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.JPA.UsuarioJPA;
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.ML.*;
 import com.digis01.LDBarajasProgramacionNCapasSeptiembre2025.Service.ValidationService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,11 +39,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
 
 @Controller
 @RequestMapping("/usuario")
 public class UsuarioController {
-
+    
+    @Autowired
+    private IUsuarioRepositoryDAO IUsuarioRepositoryDAO;
     @Autowired
     private UsuarioDAOImplementation usuarioDAOImplementation;
     @Autowired
@@ -146,7 +153,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/carga")
-    public String procesarCarga(@RequestParam("archivo") MultipartFile archivo,Model model,HttpSession session) throws IOException {
+    public String procesarCarga(@RequestParam("archivo") MultipartFile archivo, Model model, HttpSession session) throws IOException {
 
         if (archivo == null || archivo.isEmpty()) {
             model.addAttribute("mensajeError", "Debe seleccionar un archivo para cargar.");
@@ -436,7 +443,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/add")
-    public String ADD(@Valid @ModelAttribute("Usuario") Usuario usuario,BindingResult bindingResult,Model model,RedirectAttributes redirectAttributes,@RequestParam("imagenFile") MultipartFile imagenFile
+    public String ADD(@Valid @ModelAttribute("Usuario") Usuario usuario, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @RequestParam("imagenFile") MultipartFile imagenFile
     ) {
 
         if (bindingResult.hasErrors()) {
@@ -512,6 +519,7 @@ public class UsuarioController {
         return result;
     }
 //-----------------------------------------------------UPDATE USUARIO-----------------------------------------------------------------
+
     @PostMapping("/update")
     public String updateUsuario(@ModelAttribute("usuario") Usuario usuario, RedirectAttributes redirectAttributes) {
         Result resultUsuario = usuarioJPADAOImplementation.Update(usuario);
@@ -527,7 +535,7 @@ public class UsuarioController {
 //    -------------------------------------------------------------ADD DIRECCION-------------------------------------------------
 
     @PostMapping("/direccion/add/{idUsuario}")
-    public String addDireccion(@PathVariable int idUsuario,@ModelAttribute("direccion") Direccion direccion,RedirectAttributes redirectAttributes) {
+    public String addDireccion(@PathVariable int idUsuario, @ModelAttribute("direccion") Direccion direccion, RedirectAttributes redirectAttributes) {
 
         // Llamar al DAO para guardar la dirección
         Result result = usuarioJPADAOImplementation.AddDireccion(direccion, idUsuario);
@@ -544,7 +552,7 @@ public class UsuarioController {
 //--------------------------------------------------------UPDATE DIRECCION-------------------------------------------------
 
     @PostMapping("/direccion/update/{idUsuario}")
-    public String updateDireccion(@PathVariable int idUsuario,@ModelAttribute("direccion") Direccion direccion,RedirectAttributes redirectAttributes) {
+    public String updateDireccion(@PathVariable int idUsuario, @ModelAttribute("direccion") Direccion direccion, RedirectAttributes redirectAttributes) {
 
         if (direccion.getIdDireccion() <= 0) {
             redirectAttributes.addFlashAttribute("mensajeError", "No se pudo actualizar la dirección: ID inválido.");
@@ -599,7 +607,7 @@ public class UsuarioController {
 
 //-------------------------------------IMAGEN UPDATE----------------------------------------------------------
     @PostMapping("/update-imagen")
-    public String UpdateImagen(@RequestParam("idUsuario") int idUsuario,@RequestParam("imagen") MultipartFile file) {
+    public String UpdateImagen(@RequestParam("idUsuario") int idUsuario, @RequestParam("imagen") MultipartFile file) {
 
         try {
             if (!file.isEmpty()) {
@@ -620,6 +628,7 @@ public class UsuarioController {
         return "redirect:/usuario/detail/" + idUsuario;
     }
 //--------------------BUCADOR DINAMICO-----------------------------
+
     @PostMapping()
     public String BuscarUsuario(@ModelAttribute("Usuario") Usuario usuario, Model model) {
         Result result = usuarioJPADAOImplementation.BusquedaDinamica(usuario);
@@ -628,5 +637,56 @@ public class UsuarioController {
         model.addAttribute("Usuario", usuario);
         return "UsuarioIndex";
     }
+//------------------------------------------LOGGIN------------------------------------
 
+     @GetMapping("/login")
+    public String mostrarLogin(@RequestParam(required = false) String error,
+                               Model model) {
+        if (error != null) {
+            model.addAttribute("error", true);
+        }
+        return "UsuarioLogin"; // nombre del HTML
+    }
+
+    // Validación previa antes de que Spring Security intente autenticar
+    @PostMapping("/login")
+    public String validarUsuario(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 Model model) throws IOException, ServletException {
+
+        String username = request.getParameter("username");
+        UsuarioJPA usuario = IUsuarioRepositoryDAO.findByUserName(username);
+
+        if (usuario == null) {
+            // Usuario no existe --> dejar que Spring Security maneje el error
+            return "redirect:/login?error";
+        }
+
+        if (usuario.getStatus() == 0) {
+            // Usuario inactivo
+            model.addAttribute("usuarioInactivo", true);
+            return "login";
+        }
+
+        // Usuario activo -> delegar autenticación a Spring Security
+        request.login(username, request.getParameter("password"));
+
+        return "redirect:/home";
+    }
+//-----------------------------------UPDATE STATUS---------------------------------------------
+
+    @ResponseBody
+    @PutMapping("/update-status/{idUsuario}/{status}")
+    public ResponseEntity<Result> updateStatus(
+            @PathVariable int idUsuario,
+            @PathVariable int status) {
+
+        Result result = usuarioJPADAOImplementation.UpdateStatus(idUsuario, status);
+
+        if (!result.correct) {
+            return ResponseEntity.status(400).body(result);
+        }
+
+        return ResponseEntity.ok(result);
+    }
 }

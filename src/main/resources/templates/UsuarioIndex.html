@@ -38,6 +38,9 @@
             <img src="https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?semt=ais_hybrid&w=740&q=80" alt="Logo usuario">
             <h1>Bienvenido al Sistema de Usuarios</h1>
             <div style="width: 120px;"></div>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+            </form>
         </div>
         <div class="text-center">
             <form method="POST" th:object="${Usuario}" th:action="@{usuario}">
@@ -64,7 +67,7 @@
                     </div>
                     <div class="col-md-3">
                         <i></i> <br>
-                    <button type="submit" class="btn btn-primary">Buscar</button>
+                        <button type="submit" class="btn btn-primary">Buscar</button>
                     </div>
                 </div>
             </form>
@@ -88,6 +91,7 @@
                             <th scope="col">Datos de Usuario</th>
                             <th scope="col">Contacto</th>
                             <th scope="col">Dirección (Direcciones)</th>
+                            <th scope="col">Status</th>
                             <th scope="col">Opciones</th>
                         </tr>
                     </thead>
@@ -97,19 +101,19 @@
                                 <strong><i class="bi bi-person-circle"></i> User Name:</strong> 
                                 <span th:text="${usuario.userName}"></span>  <br>
                                 <div class="position-relative d-inline-block">
-                            <!-- Imagen actual -->
-                            <img th:if="${usuario.imagen != null}"
-                                 th:src="'data:image/*;base64,' + ${usuario.imagen}"
-                                 alt="Imagen de usuario"
-                                 class="imagen-usuario rounded-circle"
-                                 width="100" height="100"/>
+                                    <!-- Imagen actual -->
+                                    <img th:if="${usuario.imagen != null}"
+                                         th:src="'data:image/*;base64,' + ${usuario.imagen}"
+                                         alt="Imagen de usuario"
+                                         class="imagen-usuario rounded-circle"
+                                         width="100" height="100"/>
 
-                            <!-- Imagen por defecto -->
-                            <img th:if="${usuario.imagen == null}"
-                                 src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
-                                 alt="Imagen por defecto"
-                                 class="imagen-usuario rounded-circle"
-                                 width="100" height="100"/>
+                                    <!-- Imagen por defecto -->
+                                    <img th:if="${usuario.imagen == null}"
+                                         src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
+                                         alt="Imagen por defecto"
+                                         class="imagen-usuario rounded-circle"
+                                         width="100" height="100"/>
                             </td>
                             <td>
                                 <strong><i class="bi bi-person"></i> Nombre:</strong> 
@@ -134,6 +138,15 @@
                                     <strong>Numero Int:</strong> <span th:text="${direccion.numeroInterior}"></span>  <br>
                                     <strong>Numero Ext:</strong> <span th:text="${direccion.numeroExterior}"></span>  <br>
                                 </ul>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           th:data-id="${usuario.idUsuario}"
+                                           th:checked="${usuario.status == 1}"
+                                           th:onchange="|toggleStatus(${usuario.idUsuario}, this.checked)|">
+                                </div>
                             </td>
                             <td>
                                 <a th:href="@{/usuario/detail/{id}(id=${usuario.idUsuario})}" class="btn btn-warning btn-sm">
@@ -171,6 +184,29 @@
                         document.getElementById('formEliminar_' + idUsuario).submit();
                     }
                 });
+            }
+        </script>
+        <script>
+            function toggleStatus(idUsuario, isChecked) {
+                const newStatus = isChecked ? 1 : 0;
+
+                fetch(`/usuario/update-status/${idUsuario}/${newStatus}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Respuesta del servidor:", data);
+                            if (!data.correct) {
+                                alert("Error: " + data.errorMessage);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error en fetch:", error);
+                            alert("No se pudo actualizar el status");
+                        });
             }
         </script>
 

@@ -70,6 +70,8 @@ public class Usuario {
     private String Curp;
     
     private String Imagen;
+    
+    private int Status;
 
     public String getImagen() {
         return Imagen;
@@ -192,6 +194,16 @@ public class Usuario {
     public void setCurp(String Curp) { 
         this.Curp = Curp; 
     }
+
+    public int getStatus() {
+        return Status;
+    }
+
+    public void setStatus(int Status) {
+        this.Status = Status;
+    }
+    
+    
 
     public Rol getRol() {
         return Rol;
